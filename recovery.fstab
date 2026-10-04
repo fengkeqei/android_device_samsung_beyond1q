@@ -1,0 +1,17 @@
+# Android fstab file (recovery / OTA releasetools use)
+# The filesystem that contains the filesystem checker binary (typically /system) cannot
+# specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
+
+#<src>                                                  <mnt_point>     <type>  <mnt_flags and options>                          <fs_mgr_flags>
+/dev/block/bootdevice/by-name/recovery                  /recovery       emmc    defaults                                         defaults
+/dev/block/bootdevice/by-name/boot                      /boot           emmc    defaults                                         defaults
+/dev/block/bootdevice/by-name/system                    /system         ext4    ro,barrier=1                                     wait,avb=vbmeta_system
+/dev/block/bootdevice/by-name/vendor                    /vendor         ext4    ro,barrier=1                                     wait,avb=vbmeta
+/dev/block/bootdevice/by-name/product                   /product        ext4    ro,barrier=1                                     wait
+/dev/block/bootdevice/by-name/odm                       /odm            ext4    ro,barrier=1                                     wait
+/dev/block/bootdevice/by-name/cache                     /cache          ext4    noatime,nosuid,nodev,barrier=1                   wait,check
+/dev/block/bootdevice/by-name/efs                       /efs            ext4    noatime,nosuid,nodev,barrier=1                   wait
+/dev/block/bootdevice/by-name/persist                   /persist        ext4    noatime,nosuid,nodev,barrier=1                   wait
+/dev/block/bootdevice/by-name/userdata                  /data           ext4    noatime,nosuid,nodev,noauto_da_alloc,barrier=1   wait,check,fileencryption=ice
+/dev/block/bootdevice/by-name/misc                      /misc           emmc    defaults                                         defaults
+/dev/block/bootdevice/by-name/modem                     /firmware       vfat    ro,shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0  wait

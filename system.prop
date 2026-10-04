@@ -1,0 +1,13 @@
+# Dalvik heap configuration.
+#
+# build/make/core/config.mk defaults TARGET_SYSTEM_PROP to
+# $(TARGET_DEVICE_DIR)/system.prop, i.e. this file. It went missing from the
+# tree at some point, so /system/build.prop lost every dalvik.vm.heap* value.
+# Without dalvik.vm.heapsize the zygote heap falls back to 16 MB and
+# system_server dies with OutOfMemoryError every ~5 s before boot completes
+# (Round 67).
+dalvik.vm.heapstartsize=8m
+dalvik.vm.heapsize=512m
+dalvik.vm.heaptargetutilization=0.75
+dalvik.vm.heapminfree=512k
+dalvik.vm.heapmaxfree=8m

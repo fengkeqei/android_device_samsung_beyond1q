@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Punch-hole (Infinity-O) cutout declaration for beyond1q.
+
+  Stock One UI leaves config_mainBuiltInDisplayCutout empty and masks the
+  camera hole via its own SystemUI, so AOSP has no knowledge of the cutout
+  and status bar icons collide with the hole. Declare a top-right cutout.
+  Path value matches the LineageOS official beyond1lte tree (same panel):
+  203 x 149 px rectangle anchored at the right edge (@right).
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- The bounding path of the cutout region of the main built-in display,
+         in the display's native orientation, origin at top center.
+         Appending `@right` moves the origin to the top right corner. -->
+    <string translatable="false" name="config_mainBuiltInDisplayCutout">M 0,0 H -203 V 149 H 0 V 0 Z @right</string>
+
+</resources>

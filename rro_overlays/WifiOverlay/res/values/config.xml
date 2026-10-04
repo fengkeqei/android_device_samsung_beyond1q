@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- bcmdhd FullMAC firmware mis-handles SAE: WPA2-PSK networks auto-upgraded
+         to WPA3-SAE get association-rejected (statusCode 1). Disable both upgrades
+         so WPA2-PSK configs stay PSK. -->
+    <bool name="config_wifiSaeUpgradeEnabled">false</bool>
+    <bool name="config_wifiSaeUpgradeOffloadEnabled">false</bool>
+</resources>

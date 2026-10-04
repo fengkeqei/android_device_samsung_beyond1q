@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Icon vertical position tweak for beyond1q punch-hole panel.
+
+  AOSP centers the status bar contents in status bar height (= cutout
+  height, 149px here). On stock One UI the icons sit ~3px lower. Since the
+  content area is centered, paddingTop of 6px shifts every child down by
+  exactly 6/2 = 3px while keeping the status bar height unchanged.
+
+  Portrait only: sm8150-common values-land keeps 0dp for landscape.
+-->
+<resources>
+    <dimen name="status_bar_padding_top">6px</dimen>
+</resources>

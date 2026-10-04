@@ -1,0 +1,30 @@
+// Beyond1qlte device
+cc_library_shared {
+    name: "libbatterylist",
+    vendor: true,
+}
+
+// The BCM4375 runtime-PM helper and the Broadcom wl control tool are static
+// aarch64 ELF executables; they must be declared as prebuilt binaries because
+// PRODUCT_COPY_FILES rejects ELF files.
+cc_prebuilt_binary {
+    name: "dhd_rpm",
+    vendor: true,
+    stem: "dhd_rpm",
+    srcs: ["dhd_rpm"],
+    compile_multilib: "64",
+    strip: {
+        none: true,
+    },
+}
+
+cc_prebuilt_binary {
+    name: "wl_cmd",
+    vendor: true,
+    stem: "wl_cmd",
+    srcs: ["wl_cmd"],
+    compile_multilib: "64",
+    strip: {
+        none: true,
+    },
+}
