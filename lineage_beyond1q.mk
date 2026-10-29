@@ -34,6 +34,11 @@ PRODUCT_BRAND := samsung
 PRODUCT_MODEL := Galaxy S10
 PRODUCT_MANUFACTURER := samsung
 
+## OTA/recovery assert list. Stock firmware (and OrangeFox, which reads the
+## device tree) identifies this model as beyond1qlte / beyond1qltezc, while the
+## Lineage-style tree uses beyond1q; accept all so recovery-side flashes pass.
+TARGET_OTA_ASSERT_DEVICE := beyond1q,beyond1qlte,beyond1qltezc,beyond1qltechn
+
 ## Boot animation
 TARGET_BOOTANIMATION_HALF_RES := true
 TARGET_SCREEN_HEIGHT := 3040

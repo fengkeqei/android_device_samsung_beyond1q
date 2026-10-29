@@ -2,13 +2,18 @@
 # there is no odm partition, so neither is listed here)
 #<src>                                                  <mnt_point>            <type>  <mnt_flags and options>                                                                        <fs_mgr_flags>
 /dev/block/bootdevice/by-name/vendor                    /vendor                ext4    ro,barrier=1                                                                                     wait,first_stage_mount
-/dev/block/bootdevice/by-name/userdata                  /data                  ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          latemount,wait,check,quota,reservedsize=128M
+# quota/reservedsize/check removed: on 4.14 the tune2fs path (prjquota) and the
+# fsck pass both fail and fs_mgr_mount_all returns FAIL(-1), which suppresses the
+# 'nonencrypted' trigger -> class_start main never runs -> zygote never forks.
+/dev/block/bootdevice/by-name/userdata                  /data                  ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered          latemount,wait
 /dev/block/bootdevice/by-name/persist                   /mnt/vendor/persist    ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check
 /dev/block/bootdevice/by-name/misc                      /misc                  emmc    defaults                                                                                         defaults,first_stage_mount
 /dev/block/bootdevice/by-name/cache                     /cache                 ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check
-/dev/block/bootdevice/by-name/apnhlos                   /vendor/firmware_mnt   vfat    ro,context=u:object_r:firmware_file:s0,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337        wait
-/dev/block/bootdevice/by-name/modem                     /vendor/firmware-modem vfat    ro,context=u:object_r:firmware_file:s0,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337        wait
-/dev/block/bootdevice/by-name/dsp                       /vendor/dsp            ext4    ro,nosuid,nodev,barrier=1                                                                        wait
+# modem/apnhlos/dsp 分区在本 ROM 不存在（挂载报 No such file），且它们是 /vendor 下的
+# 挂载点，会让 soong fsgen 报 "Path is outside directory"，故注释掉（bring-up 阶段不需要）。
+#/dev/block/bootdevice/by-name/apnhlos                   /vendor/firmware_mnt   vfat    ro,context=u:object_r:firmware_file:s0,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337        wait
+#/dev/block/bootdevice/by-name/modem                     /vendor/firmware-modem vfat    ro,context=u:object_r:firmware_file:s0,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337        wait
+#/dev/block/bootdevice/by-name/dsp                       /vendor/dsp            ext4    ro,nosuid,nodev,barrier=1                                                                        wait
 /dev/block/bootdevice/by-name/efs                       /mnt/vendor/efs        ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check
 /dev/block/bootdevice/by-name/sec_efs                   /efs                   ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check
 /dev/block/bootdevice/by-name/dqmdbg                    /dqmdbg                ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check
