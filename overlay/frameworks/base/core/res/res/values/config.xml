@@ -6,13 +6,17 @@
   camera hole via its own SystemUI, so AOSP has no knowledge of the cutout
   and status bar icons collide with the hole. Declare a top-right cutout.
   Path value matches the LineageOS official beyond1lte tree (same panel):
-  203 x 149 px rectangle anchored at the right edge (@right).
+  203 x 96 px rectangle anchored at the right edge (@right).
+  Height 96: the real hole bottom edge, measured by the user against the
+  layout-bound line at status_bar_height (28dp @ 548dpi = 96px); the previous
+  149px (LineageOS beyond1lte value) pushed the status bar 53px deeper than
+  the physical hole, and the shade carrier row ended up inside the hole band.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!-- The bounding path of the cutout region of the main built-in display,
          in the display's native orientation, origin at top center.
          Appending `@right` moves the origin to the top right corner. -->
-    <string translatable="false" name="config_mainBuiltInDisplayCutout">M 0,0 H -203 V 149 H 0 V 0 Z @right</string>
+    <string translatable="false" name="config_mainBuiltInDisplayCutout">M 0,0 H -203 V 150 H 0 V 0 Z @right</string>
 
 </resources>

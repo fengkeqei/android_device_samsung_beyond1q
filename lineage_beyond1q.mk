@@ -4,6 +4,16 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+## SoC / codename strings for the AviumUI About-phone card.
+## vendor/avium/config/avium.mk defaults both to "Unknown" with ?=, and
+## vendor/avium/config/prop.mk bakes them into PRODUCT_BUILD_PROP_OVERRIDES as
+## AviumSocName / AviumDeviceName at the moment it is parsed. Both happen inside
+## the common_full_phone.mk inherit below, so these must be set BEFORE it --
+## assigning them afterwards leaves ro.avium.soc.model / ro.avium.device.codename
+## at "Unknown" (Kati expands PRODUCT_BUILD_PROP_OVERRIDES eagerly).
+AVIUM_SETTINGS_SOC_MODEL_NAME := Snapdragon 855
+AVIUM_SETTINGS_DEVICE_CODENAME := beyond1q
+
 ## Inherit from generic products, most specific first
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
@@ -33,6 +43,29 @@ PRODUCT_DEVICE := beyond1q
 PRODUCT_BRAND := samsung
 PRODUCT_MODEL := Galaxy S10
 PRODUCT_MANUFACTURER := samsung
+
+## SoC identification. ro.board.platform is set by BoardConfig (msmnile);
+## ro.soc.* is what Settings > About phone reads (Build.SOC_MODEL /
+## Build.SOC_MANUFACTURER). SM8150 = Snapdragon 855 (Exynos-less SM-G9730).
+##
+## Do NOT add ro.soc.model.name here: PRODUCT_PRODUCT_PROPERTIES is word-split
+## by Kati, so a value with a space ("Snapdragon 855") lands as
+##   ro.soc.model.name=Snapdragon
+##   855
+## i.e. a truncated prop plus a bogus key-less line. The marketing name goes
+## through ro.avium.soc.model instead (see AViUM_SETTINGS_SOC_MODEL_NAME below),
+## which gen_build_prop.py writes verbatim.
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.soc.manufacturer=Qualcomm \
+    ro.soc.model=SM8150
+
+## Maintainer shown on the AviumUI About-phone card.
+## vendor/avium/config/version.mk already emits
+##   ro.avium.maintainer=$(AVIUM_MAINTAINER)
+## so setting the variable is the supported way to fill it in; adding a second
+## ro.avium.maintainer line here makes gen_build_prop abort with
+##   error: found duplicate sysprop assignments
+AVIUM_MAINTAINER := Fengkewei
 
 ## OTA/recovery assert list. Stock firmware (and OrangeFox, which reads the
 ## device tree) identifies this model as beyond1qlte / beyond1qltezc, while the

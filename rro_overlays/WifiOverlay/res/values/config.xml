@@ -5,4 +5,22 @@
          so WPA2-PSK configs stay PSK. -->
     <bool name="config_wifiSaeUpgradeEnabled">false</bool>
     <bool name="config_wifiSaeUpgradeOffloadEnabled">false</bool>
+    <bool name="config_wifi_ap_mac_randomization_supported">false</bool>
+    <!-- ServiceWifiResources defaults config_wifi5ghzSupport=false (AOSP
+         default; only cuttlefish overrides it). isSoftApBandSupported(5GHz)
+         ANDs this with config_wifiSoftap5ghzSupported, so 5GHz SoftAp is
+         silently disabled and SupportedChannelListIn5g stays empty. The
+         bcmdhd driver itself reports 5G (ch36-48/149-165) fine, so enable it. -->
+    <bool name="config_wifi5ghzSupport">true</bool>
+    <!-- WPA3-SAE hotspot (SOFTAP_FEATURE_WPA3_SAE). bcmdhd/hostapd do the SAE
+         handshake in software, so AP-mode SAE works even though the driver
+         reports no NL80211_ATTR_MAX_NUM_AKM_SUITES. -->
+    <bool name="config_wifi_softap_sae_supported">true</bool>
+    <!-- WiFi 6 (802.11ax) hotspot (SOFTAP_FEATURE_IEEE80211_AX): reverted to
+         false. The BCM4375 does 11ax on the STA side (client links at 11ax),
+         but cfg80211 advertises no HE PHY for this radio and OneUI on S10
+         never offered a Wi-Fi 6 hotspot either, so AP-side 11ax is not a real
+         capability. Enabling the flag only made Settings show a Wi-Fi 6
+         toggle whose network still came up as 11ac. -->
+    <bool name="config_wifiSoftapIeee80211axSupported">false</bool>
 </resources>

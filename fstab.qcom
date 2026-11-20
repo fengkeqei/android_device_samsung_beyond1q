@@ -9,10 +9,29 @@
 /dev/block/bootdevice/by-name/persist                   /mnt/vendor/persist    ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check
 /dev/block/bootdevice/by-name/misc                      /misc                  emmc    defaults                                                                                         defaults,first_stage_mount
 /dev/block/bootdevice/by-name/cache                     /cache                 ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check
-# modem/apnhlos/dsp 分区在本 ROM 不存在（挂载报 No such file），且它们是 /vendor 下的
-# 挂载点，会让 soong fsgen 报 "Path is outside directory"，故注释掉（bring-up 阶段不需要）。
-#/dev/block/bootdevice/by-name/apnhlos                   /vendor/firmware_mnt   vfat    ro,context=u:object_r:firmware_file:s0,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337        wait
-#/dev/block/bootdevice/by-name/modem                     /vendor/firmware-modem vfat    ro,context=u:object_r:firmware_file:s0,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337        wait
+# apnhlos holds ALL the firmware blobs (adsp/modem/cdsp/slpi/ipa_fws/gpu).
+# It MUST be mounted: without it every firmware_class load fails and the IPA
+# driver panics (ipa3_load_ipa_fw -> ipa_assert -> BUG() -> kernel panic),
+# which is what produced the boot loop after the bpfloader bypass
+# (last_kmsg: "Failed to locate ipa_fws.mdt(rc:-11)" then
+# "IPA: unrecoverable error has occurred, asserting").
+# The mount point lives under /vendor, so it cannot be created via
+# PRODUCT_COPY_FILES (soong fsgen rejects "Path is outside directory");
+# fix_vendor_mountpoints.sh creates the empty directories in the vendor image.
+#
+# 2026-11-19: this also carries a640_zap.mdt (the GPU zap shader). Without it
+# the kgsl-hyp remoteproc never comes up:
+#   subsys-pil-tz soc:qcom,kgsl-hyp: a640_zap: Failed to locate a640_zap.mdt(rc:-11)
+#   subsys-restart: __subsystem_get(): a640_zap count:0        (retries every 5 s)
+# and SurfaceFlinger then dies on every start:
+#   libEGL: eglInitialize(...) failed (EGL_BAD_ALLOC)
+#   F SurfaceFlinger: no suitable EGLConfig found, giving up
+# which is the "stuck on the boot logo" symptom.
+/dev/block/bootdevice/by-name/apnhlos                   /vendor/firmware_mnt   vfat    ro,context=u:object_r:firmware_file:s0,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337        wait
+# v132bw41c: modem 分区装着 baseband 处理器固件（modem.b00..b09 + mdt），apnhlos
+# 里没有。不挂载它 ueventd 就找不到 modem.mdt（"Failed to locate modem.mdt(rc:-11)"），
+# mss remoteproc 永远不启动 -> 无基带 -> rild/IRadioModem 全挂（VoLTE 也就没有）。
+/dev/block/bootdevice/by-name/modem                     /vendor/firmware-modem vfat    ro,context=u:object_r:firmware_file:s0,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337        wait
 #/dev/block/bootdevice/by-name/dsp                       /vendor/dsp            ext4    ro,nosuid,nodev,barrier=1                                                                        wait
 /dev/block/bootdevice/by-name/efs                       /mnt/vendor/efs        ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check
 /dev/block/bootdevice/by-name/sec_efs                   /efs                   ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic          wait,check

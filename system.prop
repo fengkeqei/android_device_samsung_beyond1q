@@ -11,3 +11,9 @@ dalvik.vm.heapsize=512m
 dalvik.vm.heaptargetutilization=0.75
 dalvik.vm.heapminfree=512k
 dalvik.vm.heapmaxfree=8m
+
+# Avium beyond1q: enable full RIL/IPC logging (hex dump in radio buffer).
+# libsec-ril reads these at startup and forwards the level to the modem CP;
+# required to diagnose modem IPC framing issues (e.g. "IPC message N truncated").
+ro.vendor.boot.debug_level=0x4948
+ro.vendor.boot.cp_debug_level=0x4948

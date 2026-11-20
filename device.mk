@@ -40,14 +40,3 @@ DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 # from the tree entirely (done: removed from proprietary-files.txt).
 PRODUCT_PACKAGES += \
     android.hardware.light-service.lineage \
-
-# A16 bring-up: override the stock init.beyond1q.rc (imported by
-# init.target.rc) to add the missing `on late-fs: mount_all --late`. Without it
-# /data is never mounted, vold spins forever waiting for
-# android.security.maintenance (keystore2 needs /data), and boot never
-# completes. init.qcom.rc is NOT imported by anything on this device, so the
-# same stanza placed there never ran (last_kmsg 2026-10-30).
-# This PRODUCT_COPY_FILES must stay after the vendor blob's copy of the same
-# destination so kati keeps this source.
-PRODUCT_COPY_FILES += \
-    device/samsung/beyond1q/rootdir/etc/init/hw/init.beyond1q.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.beyond1q.rc
